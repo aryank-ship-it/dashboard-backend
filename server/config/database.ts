@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 export const connectDB = async (): Promise<void> => {
     try {
-        const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/dashboard';
+        const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://aryan:18032005@cluster0.eo6sytj.mongodb.net/';
 
         await mongoose.connect(mongoURI);
 
@@ -19,7 +19,7 @@ mongoose.connection.on('disconnected', () => {
     console.log('⚠️  MongoDB disconnected');
 });
 
-mongoose.connection.on('error', (err) => {
+mongoose.connection.on('error', (err: Error) => {
     console.error('❌ MongoDB error:', err);
 });
 
