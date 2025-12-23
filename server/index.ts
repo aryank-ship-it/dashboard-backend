@@ -13,11 +13,26 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Allowed origins (add your frontend URLs here)
+const allowedOrigins = [
+    process.env.CLIENT_URL || 'http://localhost:5173',
+    'https://dashboard-pink-three-71.vercel.app',
+];
+
 // Middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: function (origin, callback) {
+        // allow requests with no origin like Postman
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
     credentials: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -48,7 +63,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`✅ Server running on port ${PORT}`);
-        console.log(`🌍 Client URL: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
+        console.log(`🌍 Allowed Client URLs: ${allowedOrigins.join(', ')}`);
     });
 }).catch((error) => {
     console.error('❌ Failed to connect to MongoDB:', error);
