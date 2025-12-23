@@ -13,19 +13,18 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Allowed origins (add your frontend URLs here)
-const allowedOrigins = [
-    process.env.CLIENT_URL || 'http://localhost:5173',
-    'https://dashboard-pink-three-71.vercel.app',
-];
+// Allowed origins from .env (comma separated) or defaults
+const allowedOrigins = (process.env.CLIENT_URLS || 'http://localhost:5173,https://dashboard-pink-three-71.vercel.app')
+    .split(',')
+    .map(url => url.trim());
 
 // Middleware
 app.use(cors({
     origin: function (origin, callback) {
-        // allow requests with no origin like Postman
+        // allow requests with no origin like Postman / curl
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+            const msg = `CORS policy does not allow access from: ${origin}`;
             return callback(new Error(msg), false);
         }
         return callback(null, true);
