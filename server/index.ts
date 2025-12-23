@@ -14,23 +14,40 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Allowed origins from .env (comma separated) or defaults
-const allowedOrigins = (process.env.CLIENT_URLS || 'http://localhost:5173,https://dashboard-pink-three-71.vercel.app')
+const allowedOrigins = (process.env.CLIENT_URLS || 'https://dashboard-pink-three-71.vercel.app,https://dashboard-3bypquxhg-aryans-projects-735866de.vercel.app,http://localhost:5173')
     .split(',')
     .map(url => url.trim());
+
+
+
 
 // Middleware
 app.use(cors({
     origin: function (origin, callback) {
-        // allow requests with no origin like Postman / curl
+        // Postman / curl
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = `CORS policy does not allow access from: ${origin}`;
-            return callback(new Error(msg), false);
+
+        // Allow all Vercel deployments (preview + prod)
+        if (origin.includes('.vercel.app')) {
+            return callback(null, true);
         }
-        return callback(null, true);
+
+        // Allow local frontend
+        if (origin === 'http://localhost:5173') {
+            return callback(null, true);
+        }
+
+        // Block everything else
+        return callback(
+            new Error(`CORS blocked for origin: ${origin}`),
+            false
+        );
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
