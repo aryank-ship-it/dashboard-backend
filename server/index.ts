@@ -62,6 +62,7 @@ app.use('/api/events', eventRoutes);
 // Root API check (ADD THIS)
 app.get('/api', (req, res) => {
     res.json({ message: 'API root is working' });
+
 });
 
 
