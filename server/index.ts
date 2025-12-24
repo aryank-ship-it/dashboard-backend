@@ -59,10 +59,16 @@ app.use('/api/team-members', teamRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/events', eventRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'OK', message: 'Server is running' });
+// Root API check (ADD THIS)
+app.get('/api', (req, res) => {
+    res.json({ message: 'API root is working' });
 });
+
+
+// Health check
+// app.get('/api/health', (req, res) => {
+//     res.json({ status: 'OK', message: 'Server is running' });
+// });
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
